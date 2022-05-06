@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<executable>
+  <category>Shape Analysis</category>
+  <title>PoissonShapeAnalysis</title>
+  <description><![CDATA[This is a CLI module that performs the 3D shape analysis using the SPoM method proposed in this paper: Gao Y, Bouix S. Statistical Shape Analysis using 3D Poisson Equation---A Quantitatively Validated Approach. Medical Image Analysis. 2016 Jan 15]]></description>
+  <version>0.0.1</version>
+  <documentation-url>https://github.com/gaoyi/SPoM</documentation-url>
+  <license>Slicer</license>
+  <contributor>Yi Gao (Shenzhen University), Sylvain Bouix (BWH)</contributor>
+  <acknowledgements>This work was partially funded by NIH R01 MH82918. This work is partially suppored by the Key-Area Research and Development Program of Guangdong Province grant 2021B0101420005, the Key Technology Development Program of Shenzhen grant JSGG20210713091811036, the Department of Education of Guangdong Province grant 2017KZDXM072, the National Natural Science Foundation of China grant 61601302, the Shenzhen Key Laboratory Foundation grant ZDSYS20200811143757022, the Shenzhen Peacock Plan grant KQTD2016053112051497, and the SZU Top Ranking Project grant 86000000210.</acknowledgements>
+  <parameters>
+    <label>IO</label>
+    <description><![CDATA[Input/output parameters]]></description>
+    <file multiple="true">
+      <name>shapeNameList1</name>
+      <longflag>shapeNameList1</longflag>
+      <flag>a</flag>
+      <label>Shape Name List 1</label>
+      <description><![CDATA[The shape files of group 1]]></description>
+      <channel>input</channel>
+    </file>
+    <file multiple="true">
+      <name>shapeNameList2</name>
+      <longflag>shapeNameList2</longflag>
+      <flag>b</flag>
+      <label>Shape Name List 2</label>
+      <description><![CDATA[The shape files of group 2]]></description>
+      <channel>input</channel>
+    </file>
+    <boolean>
+      <name>doRegistration</name>
+      <flag>r</flag>
+      <label>Perform shape registration first?</label>
+      <longflag>doRegistration</longflag>
+      <channel>input</channel>
+      <default>false</default>
+      <description><![CDATA[Wherther to perform registration of the shapes before SPoM analysis]]></description>
+    </boolean>
+    <image>
+      <name>meanImageName</name>
+      <label>Output Mean Shape Volume</label>
+      <longflag>meanImageName</longflag>
+      <channel>output</channel>
+      <description><![CDATA[Output Mean Shape Volume]]></description>
+    </image>
+    <geometry type="model">
+      <name>meanVTKName</name>
+      <label>Output Model</label>
+      <channel>output</channel>
+      <longflag>meanVTKName</longflag>
+      <description><![CDATA[Output model]]></description>
+    </geometry>
+  </parameters>
+</executable>
