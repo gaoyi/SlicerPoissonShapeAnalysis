@@ -22,10 +22,6 @@
 
 #include <vector>
 
-// alglib
-#include "ap.h"
-#include "statistics.h"
-
 // itk
 #include "itkAddImageFilter.h"
 #include "itkContinuousIndex.h"
@@ -56,13 +52,11 @@
 #include "transformImage.h"
 #include "utilitiesImage.h"
 #include "ShapeSumOfTwoPoissonFilter.h"
-
 #include "SumOfTwoPoissonShapeAnalysis.h"
 
 #include "itkVtkMeshConversion.h"
+#include "studentTtest.h"
 
-
-#include "utilitiesImage.h"
 
 // for debug
 #include "utilitiesIO.h"
@@ -654,42 +648,28 @@ namespace ShapeAnalysis
     vtkIdType n = m_meanShapeSurface->GetNumberOfPoints();
     m_pValuesOnMeanShapeSurface.resize(n);
 
+    std::size_t n1 = m_poissonDistanceOnMeanSurface1.size();
+    std::size_t n2 = m_poissonDistanceOnMeanSurface2.size();
 
-    alglib::ae_int_t n1 = static_cast<alglib::ae_int_t>(m_poissonDistanceOnMeanSurface1.size());
-    alglib::ae_int_t n2 = static_cast<alglib::ae_int_t>(m_poissonDistanceOnMeanSurface2.size());
-
-    alglib::real_1d_array x;
-    alglib::real_1d_array y;
-
-    double* xx = new double[n1];
-    double* yy = new double[n2];
-
-    double bothtails = 0;
-    double lefttail = 0;
-    double righttail = 0;
+    std::vector<double> x(n1);
+    std::vector<double> y(n2);
 
     for(vtkIdType i = 0; i < n; ++i)
       {
-        for (alglib::ae_int_t i1 = 0; i1 < n1; ++i1)
+        for (std::size_t i1 = 0; i1 < n1; ++i1)
           {
-            xx[i1] = m_poissonDistanceOnMeanSurface1[i1][i];
+            x[i1] = m_poissonDistanceOnMeanSurface1[i1][i];
           }
 
-        for (alglib::ae_int_t i2 = 0; i2 < n2; ++i2)
+        for (std::size_t i2 = 0; i2 < n2; ++i2)
           {
-            yy[i2] = m_poissonDistanceOnMeanSurface2[i2][i];
+            y[i2] = m_poissonDistanceOnMeanSurface2[i2][i];
           }
 
-        x.setcontent(n1, xx);
-        y.setcontent(n2, yy);
+        double pVal = studentTTest<double>(x, y);
 
-        alglib::studentttest2(x, n1, y, n2, bothtails, lefttail, righttail);
-
-        m_pValuesOnMeanShapeSurface[i] = bothtails;
-      }
-
-    delete[] xx;
-    delete[] yy;
+        m_pValuesOnMeanShapeSurface[i] = pVal;
+    }
 
     // put p-values on the mean shape surface
     vtkSmartPointer<vtkDoubleArray> pvalues = vtkSmartPointer<vtkDoubleArray>::New();
