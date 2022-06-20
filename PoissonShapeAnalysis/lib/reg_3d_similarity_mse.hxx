@@ -72,8 +72,7 @@ namespace ShapeAnalysis
 
     if (numThreads != -1 && numThreads >= 1 && numThreads <= 32)
       {
-        // I don't have SMP with 32 cores.
-        registration->SetNumberOfThreads(numThreads);
+        registration->SetNumberOfWorkUnits(numThreads);
       }
 
     typename transform_t::Pointer  transform = transform_t::New();
@@ -90,7 +89,6 @@ namespace ShapeAnalysis
     initializer->SetFixedImage(  fixImg );
     initializer->SetMovingImage( movingImg );
     initializer->MomentsOn();
-    //initializer->GeometryOn();
     initializer->InitializeTransform();
 
 
