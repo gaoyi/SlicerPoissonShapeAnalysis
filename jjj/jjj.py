@@ -21,18 +21,16 @@ class jjj(ScriptedLoadableModule):
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
     self.parent.title = "jjj"  # TODO: make this more human readable by adding spaces
-    self.parent.categories = ["Examples"]  # TODO: set categories (folders where the module shows up in the module selector)
-    self.parent.dependencies = []  # TODO: add here list of module names that this module requires
-    self.parent.contributors = ["John Doe (AnyWare Corp.)"]  # TODO: replace with "Firstname Lastname (Organization)"
+    self.parent.categories = ["Shape Analysis"]  # TODO: set categories (folders where the module shows up in the module selector)
+    self.parent.dependencies = ["PoissonShapeAnalysis"]  # TODO: add here list of module names that this module requires
+    self.parent.contributors = ["Yi Gao (Shenzhen University), Sylvain Bouix (BWH)"]  # TODO: replace with "Firstname Lastname (Organization)"
     # TODO: update with short description of the module and a link to online module documentation
     self.parent.helpText = """
-This is an example of scripted loadable module bundled in an extension.
-See more information in <a href="https://github.com/organization/projectname#jjj">module documentation</a>.
+This is a CLI module that performs the 3D shape analysis using the SPoM method proposed in this paper: Gao Y, Bouix S. Statistical Shape Analysis using 3D Poisson Equation---A Quantitatively Validated Approach. Medical Image Analysis. 2016 Jan 15.
 """
     # TODO: replace with organization, grant and thanks
     self.parent.acknowledgementText = """
-This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc., Andras Lasso, PerkLab,
-and Steve Pieper, Isomics, Inc. and was partially funded by NIH grant 3P41RR013218-12S1.
+This work was partially funded by NIH R01 MH82918. This work is partially suppored by the Key-Area Research and Development Program of Guangdong Province grant 2021B0101420005, the Key Technology Development Program of Shenzhen grant JSGG20210713091811036, the Department of Education of Guangdong Province grant 2017KZDXM072, the National Natural Science Foundation of China grant 61601302, the Shenzhen Key Laboratory Foundation grant ZDSYS20200811143757022, the Shenzhen Peacock Plan grant KQTD2016053112051497, and the SZU Top Ranking Project grant 86000000210.
 """
 
     # Additional initialization step after application startup is complete
@@ -107,6 +105,10 @@ class jjjWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.logic = None
     self._parameterNode = None
     self._updatingGUIFromParameterNode = False
+
+
+    self.shapeFilePathnameListGroup1 = None
+    self.shapeFilePathnameListGroup2 = None
 
   def setup(self):
     """
@@ -283,23 +285,19 @@ class jjjWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
 
   def onSelectButton1(self):
-    files = qt.QFileDialog.getOpenFileNames()
+    self.shapeFilePathnameListGroup1 = qt.QFileDialog.getOpenFileNames()
     # files = qt.QFileDialog.getOpenFileNames(self,
     #                                         "Select one or more files to open",
     #                                         "/home",
     #                                         "Images (*.png *.xpm *.jpg)")
 
-    print(files)
+    print(self.shapeFilePathnameListGroup1)
 
 
   def onSelectButton2(self):
-    files = qt.QFileDialog.getOpenFileNames()
-    # files = qt.QFileDialog.getOpenFileNames(self,
-    #                                         "Select one or more files to open",
-    #                                         "/home",
-    #                                         "Images (*.png *.xpm *.jpg)")
+    self.shapeFilePathnameListGroup2 = qt.QFileDialog.getOpenFileNames()
 
-    print(files)
+    print(self.shapeFilePathnameListGroup2)
 
 
   def onApplyButton(self):
@@ -309,14 +307,18 @@ class jjjWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     with slicer.util.tryWithErrorDisplay("Failed to compute results.", waitCursor=True):
 
       # Compute output
-      self.logic.process(self.ui.inputSelector.currentNode(), self.ui.outputVolumeSelector.currentNode(),
-        self.ui.imageThresholdSliderWidget.value, self.ui.invertOutputCheckBox.checked)
+      # self.logic.process(self.ui.inputSelector.currentNode(), self.ui.outputVolumeSelector.currentNode(),
+      #   self.ui.imageThresholdSliderWidget.value, self.ui.invertOutputCheckBox.checked)
 
-      # Compute inverted output (if needed)
-      if self.ui.invertedOutputSelector.currentNode():
-        # If additional output volume is selected then result with inverted threshold is written there
-        self.logic.process(self.ui.inputSelector.currentNode(), self.ui.invertedOutputSelector.currentNode(),
-          self.ui.imageThresholdSliderWidget.value, not self.ui.invertOutputCheckBox.checked, showResult=False)
+      self.logic.process(self.shapeFilePathnameListGroup1, self.shapeFilePathnameListGroup2, self.ui.outputVolumeSelector.currentNode(),
+                         self.ui.outputModelSelector.currentNode(), self.ui.doRegistrationCheckBox.checked)
+
+
+      # # Compute inverted output (if needed)
+      # if self.ui.invertedOutputSelector.currentNode():
+      #   # If additional output volume is selected then result with inverted threshold is written there
+      #   self.logic.process(self.ui.inputSelector.currentNode(), self.ui.invertedOutputSelector.currentNode(),
+      #     self.ui.imageThresholdSliderWidget.value, not self.ui.invertOutputCheckBox.checked, showResult=False)
 
 
 #
@@ -348,7 +350,9 @@ class jjjLogic(ScriptedLoadableModuleLogic):
     if not parameterNode.GetParameter("Invert"):
       parameterNode.SetParameter("Invert", "false")
 
-  def process(self, inputVolume, outputVolume, imageThreshold, invert=False, showResult=True):
+  #def process(self, inputVolume, outputVolume, imageThreshold, invert=False, showResult=True):
+  def process(self, shapeFilePathnameListGroup1, shapeFilePathnameListGroup2, outputVolume, outputModel, doRegistration=False):
+
     """
     Run the processing algorithm.
     Can be used without GUI widget.
@@ -359,8 +363,11 @@ class jjjLogic(ScriptedLoadableModuleLogic):
     :param showResult: show output volume in slice viewers
     """
 
-    if not inputVolume or not outputVolume:
-      raise ValueError("Input or output volume is invalid")
+    self.logic.process(self.shapeFilePathnameListGroup1, self.shapeFilePathnameListGroup2, self.ui.outputVolumeSelector.currentNode(),
+                       self.ui.outputModelSelector.currentNode(), self.ui.doRegistrationCheckBox.checked)
+
+    if not shapeFilePathnameListGroup1 or not shapeFilePathnameListGroup2 or not outputVolume or not outputModel:
+      raise ValueError("Input or output is invalid")
 
     import time
     startTime = time.time()
@@ -368,12 +375,13 @@ class jjjLogic(ScriptedLoadableModuleLogic):
 
     # Compute the thresholded output volume using the "Threshold Scalar Volume" CLI module
     cliParams = {
-      'InputVolume': inputVolume.GetID(),
-      'OutputVolume': outputVolume.GetID(),
-      'ThresholdValue' : imageThreshold,
-      'ThresholdType' : 'Above' if invert else 'Below'
+      'shapeNameList1': shapeFilePathnameListGroup1,
+      'shapeNameList2': shapeFilePathnameListGroup2,
+      'meanImageName': outputVolume.GetID(),
+      'meanVTKName': outputModel.GetID(),
+      'doRegistration' : doRegistration
       }
-    cliNode = slicer.cli.run(slicer.modules.thresholdscalarvolume, None, cliParams, wait_for_completion=True, update_display=showResult)
+    cliNode = slicer.cli.run(slicer.modules.poissonshapeanalysis, None, cliParams, wait_for_completion=True, update_display=showResult)
     # We don't need the CLI module node anymore, remove it to not clutter the scene with it
     slicer.mrmlScene.RemoveNode(cliNode)
 
