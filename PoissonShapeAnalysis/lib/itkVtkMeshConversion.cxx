@@ -82,7 +82,7 @@ namespace ShapeAnalysis
     vtkIdType numberOfCellPoints;
 
     /// First count the total number of triangles from all the triangle strips.
-    unsigned int numberOfTriangles = 0;
+    vtkIdType numberOfTriangles = 0;
 
     triangleStrips->InitTraversal();
 
@@ -121,7 +121,7 @@ namespace ShapeAnalysis
     
         unsigned int numberOfTrianglesInStrip = numberOfCellPoints - 2;
 
-        unsigned long pointIds[3];
+        TriangleCellType::PointIdentifier pointIds[3];
         pointIds[0] = cellPoints[0];
         pointIds[1] = cellPoints[1];
         pointIds[2] = cellPoints[2];
@@ -148,10 +148,14 @@ namespace ShapeAnalysis
           {
             continue;
           }
+        TriangleCellType::PointIdentifier pointIds[3];
+        pointIds[0] = cellPoints[0];
+        pointIds[1] = cellPoints[1];
+        pointIds[2] = cellPoints[2];
         MeshType::CellAutoPointer c;
         TriangleCellType * t = new TriangleCellType;
         //t->SetPointIds( static_cast<unsigned long*>(cellPoints) );
-        t->SetPointIds( (unsigned long*)cellPoints );
+        t->SetPointIds( pointIds );
         c.TakeOwnership( t );
         mesh->SetCell( cellId, c );
         cellId++;

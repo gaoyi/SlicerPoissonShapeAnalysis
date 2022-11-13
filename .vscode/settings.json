@@ -1,0 +1,10 @@
+{
+    "cmake.configureOnOpen": true,
+    "cmake.configureSettings": {
+        "Slicer_DIR": "D:\\Developing\\Slicer\\build\\Slicer-build"
+    },
+    "cmake.debugConfig": {
+        "args": [],
+        "cwd": "${workspaceFolder}/build"
+    }
+}
