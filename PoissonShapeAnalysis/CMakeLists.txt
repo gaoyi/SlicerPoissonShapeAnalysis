@@ -12,9 +12,6 @@ set(MODULE_NAME PoissonShapeAnalysis)
 find_package(SlicerExecutionModel REQUIRED)
 include(${SlicerExecutionModel_USE_FILE})
 
-find_package(Boost 1.45.0) 
-include_directories(${Boost_INCLUDE_DIRS})
-
 #
 # ITK
 #
@@ -51,7 +48,6 @@ set(MODULE_TARGET_LIBRARIES
   #alglib
   ${ITK_LIBRARIES}
   ${VTK_LIBRARIES}
-  ${Boost_LIBRARIES}
   )
 
 #-----------------------------------------------------------------------------

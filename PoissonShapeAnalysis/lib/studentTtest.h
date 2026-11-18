@@ -20,12 +20,99 @@
 #ifndef studentTtest_h_
 #define studentTtest_h_
 
+#include <cmath>
 #include <vector>
-
-#include <boost/math/distributions/students_t.hpp>
 
 namespace ShapeAnalysis
 {
+  namespace detail
+  {
+    // Continued fraction used to evaluate the regularized incomplete beta
+    // function (modified Lentz's method). See Numerical Recipes, 3rd ed.
+    inline double incompleteBetaContinuedFraction(double a, double b, double x)
+    {
+      const int maxIterations = 200;
+      const double epsilon = 3.0e-12;
+      const double minimum = 1.0e-300;
+
+      const double qab = a + b;
+      const double qap = a + 1.0;
+      const double qam = a - 1.0;
+
+      double c = 1.0;
+      double d = 1.0 - qab * x / qap;
+      if (std::fabs(d) < minimum)
+        {
+        d = minimum;
+        }
+      d = 1.0 / d;
+      double h = d;
+
+      for (int m = 1; m <= maxIterations; ++m)
+        {
+        const int m2 = 2 * m;
+
+        double aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+        d = 1.0 + aa * d;
+        if (std::fabs(d) < minimum)
+          {
+          d = minimum;
+          }
+        c = 1.0 + aa / c;
+        if (std::fabs(c) < minimum)
+          {
+          c = minimum;
+          }
+        d = 1.0 / d;
+        h *= d * c;
+
+        aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+        d = 1.0 + aa * d;
+        if (std::fabs(d) < minimum)
+          {
+          d = minimum;
+          }
+        c = 1.0 + aa / c;
+        if (std::fabs(c) < minimum)
+          {
+          c = minimum;
+          }
+        d = 1.0 / d;
+        const double del = d * c;
+        h *= del;
+
+        if (std::fabs(del - 1.0) < epsilon)
+          {
+          break;
+          }
+        }
+
+      return h;
+    }
+
+    // Regularized incomplete beta function I_x(a, b).
+    inline double incompleteBetaRegularized(double a, double b, double x)
+    {
+      if (x <= 0.0)
+        {
+        return 0.0;
+        }
+      if (x >= 1.0)
+        {
+        return 1.0;
+        }
+
+      const double bt = std::exp(std::lgamma(a + b) - std::lgamma(a) - std::lgamma(b)
+                                 + a * std::log(x) + b * std::log(1.0 - x));
+
+      if (x < (a + 1.0) / (a + b + 2.0))
+        {
+        return bt * incompleteBetaContinuedFraction(a, b, x) / a;
+        }
+      return 1.0 - bt * incompleteBetaContinuedFraction(b, a, 1.0 - x) / b;
+    }
+  }// detail
+
   template< typename valueType >
   double studentTTest(const std::vector<valueType>& array1, const std::vector<valueType>& array2)
   {
@@ -68,9 +155,10 @@ namespace ShapeAnalysis
     double v = Sn1 + Sn2 - 2.0;
     double sp = sqrt(((Sn1 - 1) * Sd1 * Sd1 + (Sn2 - 1) * Sd2 * Sd2) / v);
     double t_stat = (Sm1 - Sm2) / (sp * sqrt(1.0 / Sn1 + 1.0 / Sn2));
-    boost::math::students_t dist(v);
-    double q = boost::math::cdf(boost::math::complement(dist, fabs(t_stat)));
-    double pValue = 2.0 * q;
+
+    // Two-sided p-value of Student's t distribution:
+    //   P(|T| > |t|) = I_{v / (v + t^2)}(v / 2, 1 / 2)
+    double pValue = detail::incompleteBetaRegularized(0.5 * v, 0.5, v / (v + t_stat * t_stat));
 
     return pValue;
   };
