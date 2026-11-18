@@ -15,35 +15,55 @@ equation solver using ITK (VNL) sparse system.
 
 ### How do I get set up? ###
 
-* CMake (cmake.org)
-* ITK (itk.org, Compilation needed)
-* alglib library
-* GNU gsl
+This repository is a [3D Slicer](https://www.slicer.org) extension and provides
+the **PoissonShapeAnalysis** CLI module in the **Shape Analysis** category. It
+only depends on 3D Slicer (and the ITK/VTK libraries bundled with it).
+
+* Install it from 3D Slicer's Extension Manager (once the extension is published), or
+* Build it against a Slicer build tree following the
+  [Slicer extension build instructions](https://slicer.readthedocs.io/en/latest/developer_guide/extensions.html#build-an-extension).
 
 ### Docker
 
-The built version is also available on Docker: https://hub.docker.com/r/gaoyi/spom/
+The standalone command-line version is also available on Docker: https://hub.docker.com/r/gaoyi/spom/
 
 ```bash
 docker pull gaoyi/spom
 ```
 
-### How to use:
-Give two sets of shapes, this software/algorithm performs statistal analysis on them. It output the average/mean shape of the input shapes. Moreover, on the mean shape, the locations where the two groups have significant difference are highlighted.
+### How to use ###
 
-* Compile the code so you have the executable file named "mainSumOfTwoPoissonShapeAnalysis"
-* Save the two groups of shapes to be analyzed as binary volumetric images. Could be in the format of nifti, nrrd, mhd/mha, etc.
-* Put the full path/names of the image names of one shape group into a text file, say list1.txt
-* Put the full path/names of the image names of the other shape group into a text file, say list2.txt
-* Run 
-  * If the input shapes have ALREADY been registered, run:
+Given two groups of 3D shapes, the module performs a statistical analysis and
+outputs the mean shape of all the input shapes; the regions where the two
+groups differ significantly are highlighted on the mean shape.
+
+**In 3D Slicer:**
+
+1. Save each shape as a binary volumetric image (NIfTI, NRRD, MHA/MHD, etc.),
+   one shape per file.
+2. Put all volumes of group 1 into one folder and all volumes of group 2 into
+   another folder. Files inside each folder are read in name-sorted order;
+   hidden files and sub-folders are ignored.
+3. Open the **PoissonShapeAnalysis** module (category **Shape Analysis**).
+4. Set **Shape Folder 1** and **Shape Folder 2** to the two folders above.
+5. Enable **Perform shape registration first?** if the shapes are not already
+   registered.
+6. Set the output **Mean Shape Volume** and **Output Model**, then click
+   **Apply**.
+
+**From the command line:**
+
 ```bash
-./path-to/mainSumOfTwoPoissonShapeAnalysis list1.txt list2.txt meanImageName.nrrd meanVTPName.vtp 0
+./PoissonShapeAnalysis --shapeNameList1 /path/to/group1 \
+                       --shapeNameList2 /path/to/group2 \
+                       --meanImageName meanShape.nrrd \
+                       --meanVTKName meanShape.vtp \
+                       [--doRegistration]
 ```
-  * If the input shapes have NOT been registered, 
-```bash
-./path-to/mainSumOfTwoPoissonShapeAnalysis list1.txt list2.txt meanImageName.nrrd meanVTPName.vtp 1
-```
+
+`--shapeNameList1`/`--shapeNameList2` (short flags `-a`/`-b`) each take a folder
+containing one group's shape volumes. `--doRegistration` is a switch and is
+disabled by default.
 
 ### Who do I talk to? ###
 
