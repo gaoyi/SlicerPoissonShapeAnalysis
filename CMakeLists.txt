@@ -4,12 +4,12 @@ project(SlicerSPoM)
 
 #-----------------------------------------------------------------------------
 # Extension meta-information
-set(EXTENSION_HOMEPAGE "https://github.com/gaoyi/SlicerSPoM")
+set(EXTENSION_HOMEPAGE "https://github.com/gaoyi/SlicerPoissonShapeAnalysis")
 set(EXTENSION_CATEGORY "Shape analysis")
 set(EXTENSION_CONTRIBUTORS "Yi Gao (Shenzhen University), Sylvain Bouix (BWH)")
 set(EXTENSION_DESCRIPTION "This extension uses the Signed Poisson equations to perform statistical shape analysis.")
-set(EXTENSION_ICONURL "https://raw.githubusercontent.com/gaoyi/SlicerSPoM/master/SlicerSPoM.png")
-set(EXTENSION_SCREENSHOTURLS "https://raw.githubusercontent.com/gaoyi/SlicerSPoM/master/SlicerSPoMScreenShot.png")
+set(EXTENSION_ICONURL "https://raw.githubusercontent.com/gaoyi/SlicerPoissonShapeAnalysis/main/SlicerSPoM.png")
+set(EXTENSION_SCREENSHOTURLS "https://raw.githubusercontent.com/gaoyi/SlicerPoissonShapeAnalysis/main/SlicerSPoMScreenShot.png")
 set(EXTENSION_DEPENDS "NA") # Specified as a list or "NA" if no dependencies
 
 #-----------------------------------------------------------------------------
