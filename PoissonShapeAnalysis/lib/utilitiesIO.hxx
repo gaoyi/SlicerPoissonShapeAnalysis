@@ -22,6 +22,9 @@
 
 #include <csignal>
 #include <string>
+#include <algorithm>
+#include <filesystem>
+#include <iostream>
 
 // itk
 #include "itkImage.h"
@@ -138,6 +141,7 @@ namespace ShapeAnalysis
           }
         catch ( itk::ExceptionObject &err)
           {
+            std::cerr<< "Failed to read file: " << thisName << std::endl;
             std::cerr<< "ExceptionObject caught !" << std::endl;
             std::cerr<< err << std::endl;
             raise(SIGABRT);
@@ -148,6 +152,59 @@ namespace ShapeAnalysis
       }
 
     return imageSeries;
+  }
+
+  /*
+   * Collect the input files from a path (directory or single file).
+   */
+  inline
+  std::vector< std::string >
+  collectFilesInPath( const std::string& path )
+  {
+    namespace fs = std::filesystem;
+
+    std::vector< std::string > fileList;
+
+    std::error_code ec;
+    if (fs::is_directory(path, ec))
+      {
+      std::error_code iterateEc;
+      for (const fs::directory_entry& entry : fs::directory_iterator(path, iterateEc))
+        {
+        if (iterateEc)
+          {
+          break;
+          }
+
+        std::error_code typeEc;
+        if (!entry.is_regular_file(typeEc))
+          {
+          continue;
+          }
+
+        const std::string fileName = entry.path().filename().string();
+        if (!fileName.empty() && fileName[0] == '.')
+          {
+          continue;
+          }
+
+        fileList.push_back(entry.path().string());
+        }
+
+      std::sort(fileList.begin(), fileList.end());
+      }
+    else if (fs::is_regular_file(path, ec))
+      {
+      fileList.push_back(path);
+      }
+
+    if (fileList.empty())
+      {
+      std::cerr << "Error: no input file found in path: " << path << std::endl;
+      raise(SIGABRT);
+      }
+
+    return fileList;
   }
 
   /*

@@ -22,6 +22,7 @@
 
 
 #include <string>
+#include <vector>
 
 // itk
 #include "itkAffineTransform.h"
@@ -53,6 +54,16 @@ namespace ShapeAnalysis
   template< typename itkImage_t > 
   std::vector< typename itkImage_t::Pointer >
   readImageSeries( const std::vector< std::string >& imageNameList );
+
+  /************************************************************************************
+   * Collect the input files from a path.
+   * If the path is a directory, all the regular (non-hidden) files directly inside
+   * it are returned, sorted by name. If the path is a regular file, a one-element
+   * list is returned. This is used to accept a folder of shapes from the GUI.
+   */
+  inline
+  std::vector< std::string >
+  collectFilesInPath( const std::string& path );
 
   /************************************************************************************
    * readTextLineToListOfString   

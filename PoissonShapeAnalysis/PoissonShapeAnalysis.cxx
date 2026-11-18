@@ -13,9 +13,9 @@ int main( int argc, char * argv[] )
   typedef short pixel_t;
   typedef itk::Image<pixel_t, ImageDim> image_t;
 
-  // Read in two groups of images
-  std::vector< image_t::Pointer > shapeList1 = ShapeAnalysis::readImageSeries<image_t>(shapeNameList1);
-  std::vector< image_t::Pointer > shapeList2 = ShapeAnalysis::readImageSeries<image_t>(shapeNameList2);
+  // Read in two groups of images from the input folders
+  std::vector< image_t::Pointer > shapeList1 = ShapeAnalysis::readImageSeries<image_t>(ShapeAnalysis::collectFilesInPath(shapeNameList1));
+  std::vector< image_t::Pointer > shapeList2 = ShapeAnalysis::readImageSeries<image_t>(ShapeAnalysis::collectFilesInPath(shapeNameList2));
 
   typedef ShapeAnalysis::SumOfTwoPoissonShapeAnalysis<image_t> SumOfTwoPoissonShapeAnalysisType;
   SumOfTwoPoissonShapeAnalysisType poissonShapeAnalysis;

@@ -11,22 +11,22 @@
   <parameters>
     <label>IO</label>
     <description><![CDATA[Input/output parameters]]></description>
-    <file multiple="true">
+    <directory>
       <name>shapeNameList1</name>
       <longflag>shapeNameList1</longflag>
       <flag>a</flag>
-      <label>Shape Name List 1</label>
-      <description><![CDATA[The shape files of group 1]]></description>
+      <label>Shape Folder 1</label>
+      <description><![CDATA[The folder containing the shape files of group 1]]></description>
       <channel>input</channel>
-    </file>
-    <file multiple="true">
+    </directory>
+    <directory>
       <name>shapeNameList2</name>
       <longflag>shapeNameList2</longflag>
       <flag>b</flag>
-      <label>Shape Name List 2</label>
-      <description><![CDATA[The shape files of group 2]]></description>
+      <label>Shape Folder 2</label>
+      <description><![CDATA[The folder containing the shape files of group 2]]></description>
       <channel>input</channel>
-    </file>
+    </directory>
     <boolean>
       <name>doRegistration</name>
       <flag>r</flag>
