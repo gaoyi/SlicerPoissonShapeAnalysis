@@ -44,12 +44,17 @@ groups differ significantly are highlighted on the mean shape.
 2. Put all volumes of group 1 into one folder and all volumes of group 2 into
    another folder. Files inside each folder are read in name-sorted order;
    hidden files and sub-folders are ignored.
-3. Open the **PoissonShapeAnalysis** module (category **Shape Analysis**).
-4. Set **Shape Folder 1** and **Shape Folder 2** to the two folders above.
-5. Enable **Perform shape registration first?** if the shapes are not already
+3. Open the **SPoM Shape Analysis** module (category **Shape Analysis**). The
+   underlying **PoissonShapeAnalysis** CLI module is also available; the
+   scripted module additionally configures the p-value display.
+4. Set the **Group 1 folder** and **Group 2 folder** to the two folders above.
+5. Enable **Perform shape registration first** if the shapes are not already
    registered.
-6. Set the output **Mean Shape Volume** and **Output Model**, then click
-   **Apply**.
+6. Set the output **Mean shape volume** and **Mean shape model**, then click
+   **Apply**. The output model's **pValue** scalar is activated and displayed
+   with a hot-to-cold table: 0 is red, values approaching 0.05 are blue, and
+   values at or above 0.05 are neutral grey. The scalar range mode is set to
+   Manual with a display range of 0 to 0.05.
 
 **From the command line:**
 
