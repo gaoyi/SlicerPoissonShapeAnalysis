@@ -45,7 +45,7 @@ groups differ significantly are highlighted on the mean shape.
    another folder. Files inside each folder are read in name-sorted order;
    hidden files and sub-folders are ignored.
 3. Open the **SPoM Shape Analysis** module (category **Shape Analysis**). The
-   underlying **PoissonShapeAnalysis** CLI module is also available; the
+   underlying **Poisson Shape Analysis (CLI)** module is also available; the
    scripted module additionally configures the p-value display.
 4. Set the **Group 1 folder** and **Group 2 folder** to the two folders above.
 5. Enable **Perform shape registration first** if the shapes are not already

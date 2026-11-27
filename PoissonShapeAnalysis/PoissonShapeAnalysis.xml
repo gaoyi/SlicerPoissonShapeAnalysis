@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <executable>
   <category>Shape Analysis</category>
-  <title>PoissonShapeAnalysis</title>
+  <title>Poisson Shape Analysis (CLI)</title>
   <description><![CDATA[This is a CLI module that performs the 3D shape analysis using the SPoM method proposed in this paper: Gao Y, Bouix S. Statistical Shape Analysis using 3D Poisson Equation---A Quantitatively Validated Approach. Medical Image Analysis. 2016 Jan 15]]></description>
   <version>0.0.1</version>
   <documentation-url>https://github.com/gaoyi/SPoM</documentation-url>
